@@ -48,11 +48,23 @@ public:
     Deck();
     void shuffle();
     void view();
-    Card deal();
+    Card deal() const;
 
     std::array < Card, static_cast<size_t>(Card::Rank::TotalRanks)*
         static_cast<size_t>(Card::Suit::TotalSuits)> __deck;
     std::mt19937_64 __shuffler;
+};
+
+class Player
+{
+    std::vector<Card> __hand;
+    const Deck* __game;
+
+public:
+    Player(const Deck& game);
+    void hit();
+    void view();
+    int handValue();
 };
 
 void printCard(const Card& card);

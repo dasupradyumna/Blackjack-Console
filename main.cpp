@@ -6,20 +6,19 @@
 bool playBlackJack()
 {
     Deck game { };
-    game.view();
     game.shuffle();
     game.view();
 
-    std::vector<Card> dealer { };
-    dealer.push_back(game.deal());
-    std::vector<Card> player { };
-    player.push_back(game.deal());
-    player.push_back(game.deal());
+    Player dealer { game };
+    dealer.hit();
+    Player player { game };
+    player.hit();
+    player.hit();
 
-    for ( auto x : dealer ) x.print();
-    std::cout << handValue(dealer) << '\n';
-    for ( auto x : player ) x.print();
-    std::cout << handValue(player) << '\n';
+    dealer.view();
+    std::cout << dealer.handValue() << '\n';
+    player.view();
+    std::cout << player.handValue() << '\n';
 
     return true;
 }

@@ -67,13 +67,30 @@ void Deck::view()
     std::cout << '\n';
 }
 
-Card Deck::deal()
+Card Deck::deal() const
 {
     static size_t card { 0 };
     return __deck[card++];
 }
 
-int handValue(const std::vector<Card>& hand)
+Player::Player(const Deck& game) :
+    __hand { },
+    __game { &game }
+{}
+
+void Player::hit()
+{
+    __hand.push_back(__game->deal());
+}
+
+void Player::view()
+{
+    for ( const Card& card : __hand )
+        card.print();
+    std::cout << '\n';
+}
+
+int Player::handValue()
 {
     auto addCardRank = [ ] (int accumulated, Card next) -> int
     {
@@ -87,5 +104,6 @@ int handValue(const std::vector<Card>& hand)
         else
             throw;
     };
-    return std::accumulate(hand.begin(), hand.end(), 0, addCardRank);
+
+    return std::accumulate(__hand.begin(), __hand.end(), 0, addCardRank);
 }
