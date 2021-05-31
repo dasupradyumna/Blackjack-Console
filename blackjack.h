@@ -38,7 +38,7 @@ public:
 
     Card();
     void print() const;
-    const int value() const;
+    const size_t value() const;
 
     friend class Deck;
     friend std::ostream& operator<<( std::ostream& stream, Rank rank );
@@ -67,16 +67,15 @@ public:
 class Player
 {
     std::vector<Card> __hand;
+    size_t __11Aces;
+    size_t __count;
     const Deck* __game;
-    //  TODO  add attribute for dealing with 1 or 11 behaviour of Aces
 
 public:
     Player( const Deck& game );
     void hit();
     void view() const;
-
-    //  TODO  add an attribute instead of recalculating count everytime
-    const int handValue() const;
+    const size_t count() const;
 };
 
 #endif

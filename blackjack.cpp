@@ -2,6 +2,7 @@
 
 #include <algorithm>        // std::shuffle
 #include <ctime>            // std::time
+#include <stdexcept>        // std::out_of_range
 
 Card::Card() :
     __rank { },
@@ -13,25 +14,25 @@ void Card::print() const
     std::cout << __rank << __suit << ' ';
 }
 
-const int Card::value() const
+const size_t Card::value() const
 {
-    int rank_numeric = static_cast<int>(__rank);
-    if ( rank_numeric <= 8 )
-        return (rank_numeric + 2);
-    else if ( rank_numeric <= 11 )
-        return 10;
-    else if ( rank_numeric == 12 )
-        return 11;
+    auto rank_numeric = static_cast<size_t>(__rank);
+    if ( rank_numeric <= 8ull )
+        return rank_numeric + 2ull;
+    else if ( rank_numeric <= 11ull )
+        return 10ull;
+    else if ( rank_numeric == 12ull )
+        return 11ull;
     else
-        throw;
+        throw std::out_of_range { "error: `rank` out of Enum range.\n" };
 }
 
 std::ostream& operator<<( std::ostream& stream, Card::Rank rank )
 {
     constexpr char RankEnum[]
     { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
-    if ( static_cast<size_t>(rank) > 12ULL )
-        throw;
+    if ( static_cast<size_t>(rank) > 12ull )
+        throw std::out_of_range { "error: `rank` out of Enum range.\n" };
     else
         return stream << RankEnum[ static_cast<size_t>(rank) ];
 }
@@ -39,20 +40,21 @@ std::ostream& operator<<( std::ostream& stream, Card::Rank rank )
 std::ostream& operator<<( std::ostream& stream, Card::Suit suit )
 {
     constexpr char SuitEnum[] { 'C', 'D', 'H', 'S' };
-    if ( static_cast<size_t>(suit) > 3ULL )
-        throw;
+    if ( static_cast<size_t>(suit) > 3ull )
+        throw std::out_of_range { "error: `suit` out of Enum range.\n" };
     else
         return stream << SuitEnum[ static_cast<size_t>(suit) ];
 }
 
 Deck::Deck() :
     __deck { },
+    __currentcard { 0ull },
     __shuffler { static_cast<std::mt19937_64::result_type>(std::time( nullptr )) }
 {
-    size_t card { 0ULL };
-    for ( size_t suit { 0ULL }; suit < static_cast<size_t>(Card::Suit::TotalSuits); ++suit )
+    size_t card { 0ull };
+    for ( size_t suit { 0ull }; suit < static_cast<size_t>(Card::Suit::TotalSuits); ++suit )
     {
-        for ( size_t rank { 0ULL }; rank < static_cast<size_t>(Card::Rank::TotalRanks); ++rank )
+        for ( size_t rank { 0ull }; rank < static_cast<size_t>(Card::Rank::TotalRanks); ++rank )
         {
             __deck[ card ].__rank = static_cast<Card::Rank>(rank);
             __deck[ card ].__suit = static_cast<Card::Suit>(suit);
@@ -78,7 +80,7 @@ const Card Deck::deal() const
     if ( __currentcard == __deck.size() )
     {
         shuffle();
-        __currentcard = 0;
+        __currentcard = 0ull;
     }
 
     return __deck[ __currentcard++ ];
@@ -86,12 +88,30 @@ const Card Deck::deal() const
 
 Player::Player( const Deck& game ) :
     __hand { },
+    __11Aces { 0ull },
+    __count { 0ull },
     __game { &game }
 {}
 
 void Player::hit()
 {
-    __hand.push_back( __game->deal() );
+    auto newcard { __game->deal() };
+
+    __hand.push_back( newcard );
+    if ( newcard.value() == 11ull )
+        ++__11Aces;
+
+    __count += newcard.value();
+    if ( __count > 21ull )
+    {
+        if ( __11Aces != 0ull )
+        {
+            --__11Aces;
+            __count -= 10ull;
+        }
+        else
+            __count = 0ull;
+    }
 }
 
 void Player::view() const
@@ -101,12 +121,4 @@ void Player::view() const
     std::cout << '\n';
 }
 
-const int Player::handValue() const
-{
-    return std::accumulate( __hand.begin(), __hand.end(), 0,
-        [ ] ( int accumulated, Card next ) -> int
-        {
-            return accumulated + next.value();
-        }
-    );
-}
+const size_t Player::count() const { return __count; }

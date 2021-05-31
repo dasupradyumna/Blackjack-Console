@@ -15,11 +15,6 @@ bool playBlackJack()
     player.hit();
     player.hit();
 
-    dealer.view();
-    std::cout << dealer.handValue() << '\n';
-    player.view();
-    std::cout << player.handValue() << '\n';
-
     return true;
 }
 
