@@ -1,3 +1,6 @@
+# Visual Studio Code configuration
+.vscode/
+
 # Prerequisites
 *.d
 
