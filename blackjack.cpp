@@ -88,7 +88,7 @@ const Card Deck::deal() const
 
 Player::Player( const Deck& game ) :
     __hand { },
-    __11Aces { 0ull },
+    __11Ace { false },
     __count { 0ull },
     __game { &game }
 {}
@@ -98,15 +98,16 @@ void Player::hit()
     auto newcard { __game->deal() };
 
     __hand.push_back( newcard );
-    if ( newcard.value() == 11ull )
-        ++__11Aces;
-
     __count += newcard.value();
+
+    if ( newcard.value() == 11ull )
+        __11Ace = true;
+
     if ( __count > 21ull )
     {
-        if ( __11Aces != 0ull )
+        if ( __11Ace )
         {
-            --__11Aces;
+            __11Ace = false;
             __count -= 10ull;
         }
         else

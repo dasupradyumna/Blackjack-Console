@@ -67,7 +67,7 @@ public:
 class Player
 {
     std::vector<Card> __hand;
-    size_t __11Aces;
+    bool __11Ace;
     size_t __count;
     const Deck* __game;
 
