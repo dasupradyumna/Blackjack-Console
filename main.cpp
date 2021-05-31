@@ -10,15 +10,15 @@ bool playBlackJack()
     game.shuffle();
     game.view();
 
-    std::vector<Deck::Card> dealer { };
+    std::vector<Card> dealer { };
     dealer.push_back(game.deal());
-    std::vector<Deck::Card> player { };
+    std::vector<Card> player { };
     player.push_back(game.deal());
     player.push_back(game.deal());
 
-    for ( auto x : dealer ) printCard(x);
+    for ( auto x : dealer ) x.print();
     std::cout << handValue(dealer) << '\n';
-    for ( auto x : player ) printCard(x);
+    for ( auto x : player ) x.print();
     std::cout << handValue(player) << '\n';
 
     return true;

@@ -8,22 +8,14 @@
 
 using std::size_t;
 
-class Deck
+class Card
 {
+public:
     enum class Rank
     {
-        Two,
-        Three,
-        Four,
-        Five,
-        Six,
-        Seven,
-        Eight,
-        Nine,
-        Ten,
-        Jack,
-        Queen,
-        King,
+        Two, Three, Four, Five,
+        Six, Seven, Eight, Nine,
+        Ten, Jack, Queen, King,
         Ace,
 
         TotalRanks
@@ -39,30 +31,31 @@ class Deck
         TotalSuits
     };
 
-public:
+    Rank __rank;
+    Suit __suit;
 
-    struct Card
-    {
-        Rank rank;
-        Suit suit;
-    };
+    Card();
+    void print() const;
+
+    // friend void printCard(const Card& card);
+    // friend int handValue(const std::vector<Card>& hand);
+};
+
+class Deck
+{
+public:
 
     Deck();
     void shuffle();
     void view();
     Card deal();
 
-    friend void printCard(const Deck::Card card);
-    friend int handValue(const std::vector<Card>& hand);
-
-private:
-
-    std::array < Card, static_cast<size_t>(Deck::Rank::TotalRanks)*
-        static_cast<size_t>(Deck::Suit::TotalSuits)> __deck;
+    std::array < Card, static_cast<size_t>(Card::Rank::TotalRanks)*
+        static_cast<size_t>(Card::Suit::TotalSuits)> __deck;
     std::mt19937_64 __shuffler;
 };
 
-void printCard(const Deck::Card card);
-int handValue(const std::vector<Deck::Card>& hand);
+void printCard(const Card& card);
+int handValue(const std::vector<Card>& hand);
 
 #endif
