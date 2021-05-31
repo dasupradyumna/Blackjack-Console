@@ -2,20 +2,46 @@
 
 #include <cstdlib>          // EXIT_SUCCESS, EXIT_FAILURE
 #include <iostream>         // std::cout
+#include<stdexcept>         // std::out_of_range
 
 bool playBlackJack()
 {
     Deck game { };
-    game.shuffle();
-    game.view();
-
     Player dealer { game };
-    dealer.hit();
     Player player { game };
-    player.hit();
-    player.hit();
+    initialSetup( game, dealer, player );
+    // game.view();
 
-    return true;
+    try
+    {
+        std::cout << "<<< Player's turn >>>\n\n";
+
+        auto turn { Turn::Player };
+        char winner {};
+        while ( turn != Turn::GameOver )
+        {
+            std::cout << "Dealer Cards : ";
+            dealer.view();
+            std::cout << "Player Cards : ";
+            player.view();
+
+            switch ( turn )
+            {
+                case Turn::Player:      turn = playerTurn( player ); break;
+                case Turn::Dealer:      turn = dealerTurn( dealer ); break;
+                default:throw;
+            }
+        }
+
+        winner = checkHands( dealer, player );
+        showWinner( dealer, player, winner );
+        return true;
+    }
+    catch ( std::out_of_range& ex )
+    {
+        std::cout << ex.what();
+        return false;
+    }
 }
 
 int main()

@@ -13,9 +13,8 @@ class Card
 {
     enum class Rank
     {
-        Two, Three, Four, Five,
-        Six, Seven, Eight, Nine,
-        Ten, Jack, Queen, King,
+        Two, Three, Four, Five, Six, Seven,
+        Eight, Nine, Ten, Jack, Queen, King,
         Ace,
 
         TotalRanks
@@ -23,10 +22,7 @@ class Card
 
     enum class Suit
     {
-        Club,
-        Diamond,
-        Heart,
-        Spade,
+        Club, Diamond, Heart, Spade,
 
         TotalSuits
     };
@@ -76,6 +72,21 @@ public:
     void hit();
     void view() const;
     const size_t count() const;
+
+    friend void showWinner( const Player& dealer, const Player& player, const char& winner );
 };
+
+enum class Turn
+{
+    Player,
+    Dealer,
+    GameOver
+};
+
+void initialSetup( Deck& game, Player& dealer, Player& player );
+Turn playerTurn( Player& player );
+Turn dealerTurn( Player& dealer );
+const char checkHands( const Player& dealer, const Player& player );
+void showWinner( const Player& dealer, const Player& player, const char& winner );
 
 #endif
