@@ -3,6 +3,7 @@
 
 #include <array>            // std::array
 #include <cstddef>          // std::size_t
+#include <iostream>         // std::cout, std::ostream
 #include <random>           // std::mt19937_64
 #include <vector>           // std::vector
 
@@ -10,7 +11,6 @@ using std::size_t;
 
 class Card
 {
-public:
     enum class Rank
     {
         Two, Three, Four, Five,
@@ -34,40 +34,49 @@ public:
     Rank __rank;
     Suit __suit;
 
+public:
+
     Card();
     void print() const;
+    const int value() const;
 
-    // friend void printCard(const Card& card);
-    // friend int handValue(const std::vector<Card>& hand);
+    friend class Deck;
+    friend std::ostream& operator<<( std::ostream& stream, Rank rank );
+    friend std::ostream& operator<<( std::ostream& stream, Suit suit );
 };
+
+std::ostream& operator<<( std::ostream& stream, Card::Rank rank );
+std::ostream& operator<<( std::ostream& stream, Card::Suit suit );
 
 class Deck
 {
+    mutable std::array< Card,
+        static_cast<size_t>(Card::Rank::TotalRanks)
+        * static_cast<size_t>(Card::Suit::TotalSuits) > __deck;
+    mutable size_t __currentcard;
+    mutable std::mt19937_64 __shuffler;
+
 public:
 
     Deck();
-    void shuffle();
-    void view();
-    Card deal() const;
-
-    std::array < Card, static_cast<size_t>(Card::Rank::TotalRanks)*
-        static_cast<size_t>(Card::Suit::TotalSuits)> __deck;
-    std::mt19937_64 __shuffler;
+    void shuffle() const;
+    void view() const;
+    const Card deal() const;
 };
 
 class Player
 {
     std::vector<Card> __hand;
     const Deck* __game;
+    //  TODO  add attribute for dealing with 1 or 11 behaviour of Aces
 
 public:
-    Player(const Deck& game);
+    Player( const Deck& game );
     void hit();
-    void view();
-    int handValue();
-};
+    void view() const;
 
-void printCard(const Card& card);
-int handValue(const std::vector<Card>& hand);
+    //  TODO  add an attribute instead of recalculating count everytime
+    const int handValue() const;
+};
 
 #endif
