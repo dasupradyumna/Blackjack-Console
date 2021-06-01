@@ -73,7 +73,7 @@ public:
     const Card deal() const;        // deals a single card from a shuffled deck
 };
 
-/* This class is used to create players whho can hold a hand of cards,
+/* This class is used to create players who can hold a hand of cards,
  * and participate in the game. Player can also request a card from the deck.
  */
 class Player
