@@ -28,11 +28,11 @@ const size_t Card::value() const
 // overloads the insertion operator for Card objects
 std::ostream& operator<<( std::ostream& stream, const Card card )
 {
-    // compile-time constant list of rank characters
-    static constexpr char RankEnum[] { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
+    // static constant list of rank characters
+    static const char RankEnum[] { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
 
-    // compile-time constant list of suit characters
-    static constexpr char SuitEnum[] { 'C', 'D', 'H', 'S' };
+    // static constant list of suit characters
+    static const char SuitEnum[] { 'C', 'D', 'H', 'S' };
 
     // check for index bounds for rank and suit, and print card code
     if ( static_cast<size_t>(card.__rank) > 12ull )
