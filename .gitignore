@@ -1,3 +1,6 @@
+# git ignore file
+.gitignore
+
 # Visual Studio Code configuration
 .vscode/
 

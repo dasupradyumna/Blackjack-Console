@@ -2,10 +2,9 @@
 #define __blackjack_h__
 
 #include <array>            // std::array
-#include <cstdlib>          // std::size_t, EXIT_SUCCESS, EXIT_FAILURE
+#include <cstdlib>          // std::size_t
 #include <iostream>         // std::cout, std::ostream
 #include <random>           // std::mt19937_64
-#include <stdexcept>        // std::out_of_range, std::invalid_argument
 #include <vector>           // std::vector
 
 using std::size_t;
@@ -16,35 +15,36 @@ using std::size_t;
  */
 class Card
 {
-    // enumeration of ranks of a card
-    enum class Rank
-    {
-        Two, Three, Four, Five, Six, Seven,
-        Eight, Nine, Ten, Jack, Queen, King,
-        Ace,
+  // enumeration of ranks of a card
+  enum class Rank
+  {
+    Two, Three, Four, Five, Six, Seven,
+    Eight, Nine, Ten, Jack, Queen, King,
+    Ace,
 
-        TotalRanks
-    };
+    TotalRanks
+  };
 
-    // enumeration of suits of a card
-    enum class Suit
-    {
-        Club, Diamond, Heart, Spade,
+  // enumeration of suits of a card
+  enum class Suit
+  {
+    Club, Diamond, Heart, Spade,
 
-        TotalSuits
-    };
+    TotalSuits
+  };
 
-    Rank __rank;
-    Suit __suit;
+  Rank __rank;
+  Suit __suit;
 
-    Card();                         // only Deck objects can create Card objects
+  Card() = default;                             // only Deck objects can create Card objects
 
 public:
 
-    const size_t value() const;     // gives the value of a card's rank
+  Card( const Rank rank, const Suit suit );     // for creating R-value objects in Deck constructor
+  const size_t value() const;                   // gives the value of a card's rank
 
-    friend class Deck;              // for Deck::Deck() to use Rank and Suit enums
-    friend std::ostream& operator<<( std::ostream& stream, const Card card );   // to access Card's (private) attributes
+  friend class Deck;                            // for Deck::Deck() to use Rank and Suit enums
+  friend std::ostream& operator<<( std::ostream& stream, const Card card );   // to access Card's (private) attributes
 };
 
 // overload insertion operator for Card objects
@@ -55,22 +55,19 @@ std::ostream& operator<<( std::ostream& stream, const Card card );
  */
 class Deck
 {
-    // all attributes are made mutable for const methods
-    mutable std::array<
-        Card,
-        static_cast<size_t>(Card::Rank::TotalRanks)* static_cast<size_t>(Card::Suit::TotalSuits)
-    > __deck;
-    mutable size_t __currentcard;
-    mutable std::mt19937_64 __shuffler;
+  std::array<
+    Card,
+    static_cast<size_t>(Card::Rank::TotalRanks)* static_cast<size_t>(Card::Suit::TotalSuits)
+  > __deck;
+  size_t __currentcard;
 
 public:
 
-    Deck();                         // creates a default ordered deck
+  Deck();                                       // creates a default ordered deck
 
-    // the below methods are all const so that const instances can call them safely.
-    void shuffle() const;           // shuffles the deck using a mersenne-twister
-    void view() const;              // displays all the cards in the deck (mainly for debugging)
-    const Card deal() const;        // deals a single card from a shuffled deck
+  void shuffle();                               // shuffles the deck using a mersenne-twister
+  void view() const;                            // displays all the cards in the deck (mainly for debugging)
+  const Card deal();                            // deals a single card from a shuffled deck
 };
 
 /* This class is used to create players who can hold a hand of cards,
@@ -78,24 +75,24 @@ public:
  */
 class Player
 {
-    std::vector<Card> __hand;       // contains cards that player currently holds 
-    bool __11Ace;                   // indicates whether there is an ace worth 11 points
-    size_t __count;                 // overall value of the current hand
-    const Deck& __game;             // link to the read-only Deck to receive cards
+  std::vector<Card> __hand;                     // contains cards that player currently holds 
+  bool __11Ace;                                 // indicates whether there is an ace worth 11 points
+  size_t __score;                               // overall value of the current hand
+  Deck& __game;                                 // link to the Deck to receive cards
 
 public:
-    Player( const Deck& game );
-    void hit();                     // receive a card from the linked deck
-    void view() const;              // display current hand
-    const size_t count() const;     // outputs __count attribute
+  Player( Deck& game );
+  void hit();                                   // receive a card from the linked deck
+  void view() const;                            // display current hand
+  const size_t score() const;                   // outputs __score attribute
 };
 
 // enumeration of possible game states
 enum class Turn
 {
-    Player,
-    Dealer,
-    GameOver
+  Player,
+  Dealer,
+  GameOver
 };
 
 void initialSetup( Deck& game, Player& dealer, Player& player );                    // shuffles deck and deals cards
